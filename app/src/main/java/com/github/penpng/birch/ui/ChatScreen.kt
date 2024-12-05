@@ -107,9 +107,25 @@ fun ChatScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val items =
         listOf(
-            Icons.Default.AccountCircle,
-            Icons.Default.Email,
-            Icons.Default.Favorite
+            "Bob",
+            "Stphen",
+            "Clair",
+            "Matt",
+            "Kathy",
+            "Julia",
+            "Jasmen",
+            "Gabe",
+            "Amanda",
+            "Lexi",
+            "Scarlett",
+            "Tyler",
+            "Tori",
+            "Art",
+            "Jazlyn",
+            "Jeanette",
+            "Sam",
+            "David",
+            "Wanda"
         )
     val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(items[0]) }
@@ -125,9 +141,9 @@ fun ChatScreen(
                             Spacer(Modifier.height(12.dp))
                             items.forEach { item ->
                                 NavigationDrawerItem(
-                                    icon = { Icon(item, contentDescription = null) },
-                                    label = { Text(item.name.substringAfterLast(".")) },
-                                    selected = item == selectedItem,
+                                    icon = { Icon(painter = painterResource(R.drawable.user_ic), contentDescription = null) },
+                                    label = { Text(item) },
+                                    selected = false,
                                     onClick = {
                                         scope.launch { drawerState.close() }
                                         selectedItem = item
