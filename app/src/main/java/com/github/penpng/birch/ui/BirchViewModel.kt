@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.update
 class BirchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BirchUIState(chat = StringBuilder("")))
     val uiState: StateFlow<BirchUIState> = _uiState.asStateFlow()
-    val Context.dataStore by preferencesDataStore(
-        name = "user_preferences"
-    )
 
     fun updateChat(message: String) {
         _uiState.update { currentState ->
