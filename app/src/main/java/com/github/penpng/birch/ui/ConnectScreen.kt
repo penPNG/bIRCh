@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,18 +31,40 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import com.github.penpng.birch.data.PreferencesKeys
 import com.github.penpng.birch.R
+import com.github.penpng.birch.data.UserPreferences
+import com.github.penpng.birch.data.UserPreferencesRepository
 import com.github.penpng.birch.ui.theme.BirchTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConnectScreen(
+//    nickname: String,
+//    upr: UserPreferencesRepository,
     modifier: Modifier = Modifier,
+    viewModel: BirchViewModel,
+//    dataStore: DataStore<Preferences>,
     onConnectButtonClicked: () -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
+
+    var currentNickname by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     val items = listOf("Server 1", "Server 2")
     var selectedIndex by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
+
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween
@@ -72,8 +95,8 @@ fun ConnectScreen(
             )
         ) {
             TextField(
-                value = text,
-                onValueChange = { text = it },
+                value = currentNickname,
+                onValueChange = { currentNickname = it },
                 label = { Text("Nickname") },
                 maxLines = 1
             )
@@ -95,7 +118,12 @@ fun ConnectScreen(
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
-                    Button(onClick = { onConnectButtonClicked() } ) {
+                    Button(onClick = {
+//                        scope.launch {
+//                            upr.updateNickname(currentNickname)
+//                        }
+                        onConnectButtonClicked()
+                    }) {
                         Text("Connect")
                     }
                 }
@@ -129,7 +157,9 @@ fun ConnectPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium)),
-            onConnectButtonClicked = {}
+            onConnectButtonClicked = {},
+            viewModel = BirchViewModel()
         )
     }
 }
+
