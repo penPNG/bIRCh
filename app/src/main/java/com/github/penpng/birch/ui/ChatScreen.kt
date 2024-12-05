@@ -128,7 +128,7 @@ fun ChatScreen(
                     Scaffold(
                         topBar = {
                             ChatAppBar(
-                                navigateUp = {}
+                                navigateUp = onDisconnectButtonClicked
                             )
                         }
                     ) { innerPadding ->

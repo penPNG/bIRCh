@@ -38,7 +38,7 @@ fun BirchApp(
             startDestination = bIRChScreen.Login.name,
             //modifier = Modifier.padding(innerPadding),
             enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
-            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
         ) {
            composable(route = bIRChScreen.Login.name) {
                 ConnectScreen(
@@ -56,7 +56,7 @@ fun BirchApp(
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     onDisconnectButtonClicked = {
-                        navController.navigate(bIRChScreen.Login.name)
+                        navController.popBackStack(bIRChScreen.Login.name, inclusive = false)
                     }
                 )
            }
