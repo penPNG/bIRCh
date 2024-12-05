@@ -1,6 +1,7 @@
 package com.github.penpng.birch
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -12,15 +13,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.penpng.birch.data.UserPreferencesRepository
 import com.github.penpng.birch.ui.BirchViewModel
 import com.github.penpng.birch.ui.ChatScreen
 import com.github.penpng.birch.ui.ConnectScreen
-import com.github.penpng.birch.ui.TempViewModel
+import java.util.prefs.Preferences
 
 enum class bIRChScreen(@StringRes val title: Int) {
     Login(title = R.string.app_name),
@@ -31,6 +34,9 @@ enum class bIRChScreen(@StringRes val title: Int) {
 @Composable
 fun BirchApp(
     viewModel: BirchViewModel = viewModel(),
+//    upr: UserPreferencesRepository,
+//    nickname: String,
+//    dataStore: DataStore<androidx.datastore.preferences.core.Preferences>,
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -45,12 +51,16 @@ fun BirchApp(
         ) {
            composable(route = bIRChScreen.Login.name) {
                 ConnectScreen(
+//                    nickname,
+//                    upr = upr,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     onConnectButtonClicked = {
                         navController.navigate(bIRChScreen.Chat.name)
-                    }
+                    },
+                    viewModel = viewModel,
+//                    dataStore = dataStore
                 )
            }
            composable(route = bIRChScreen.Chat.name) {
