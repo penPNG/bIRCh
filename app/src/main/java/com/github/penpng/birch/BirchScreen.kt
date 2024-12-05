@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
@@ -15,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.penpng.birch.ui.BirchViewModel
 import com.github.penpng.birch.ui.ChatScreen
 import com.github.penpng.birch.ui.ConnectScreen
 import com.github.penpng.birch.ui.TempViewModel
@@ -27,12 +30,12 @@ enum class bIRChScreen(@StringRes val title: Int) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BirchApp(
-    viewModel: TempViewModel = viewModel(),
+    viewModel: BirchViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
 
     Scaffold { //innerPadding ->
-
+        val uiState by viewModel.uiState.collectAsState()
         NavHost(
             navController = navController,
             startDestination = bIRChScreen.Login.name,
@@ -52,6 +55,8 @@ fun BirchApp(
            }
            composable(route = bIRChScreen.Chat.name) {
                 ChatScreen(
+                    viewModel = viewModel,
+                    uiState = uiState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),

@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.penpng.birch.R
+import com.github.penpng.birch.data.BirchUIState
 import com.github.penpng.birch.ui.theme.BirchTheme
 import com.github.penpng.birch.ui.theme.Pink40
 import kotlinx.coroutines.launch
@@ -86,6 +87,8 @@ fun ChatAppBar(
 
 @Composable
 fun ChatScreen(
+    viewModel: BirchViewModel,
+    uiState: BirchUIState,
     modifier: Modifier = Modifier,
     onDisconnectButtonClicked: () -> Unit
 ) {
@@ -98,6 +101,7 @@ fun ChatScreen(
         )
     val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(items[0]) }
+    var chat by remember { mutableStateOf("")}
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
@@ -139,7 +143,7 @@ fun ChatScreen(
                         ) {
                             Surface(color = Color(0xFF201D1E)) {
                                 var offset by remember { mutableStateOf(0f) }
-                                Text("Text",
+                                Text(chat.toString(),
                                     modifier = Modifier.padding(8.dp).fillMaxWidth().height(690.dp)
                                         .scrollable(
                                             orientation = Orientation.Vertical,
@@ -166,7 +170,9 @@ fun ChatScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 FilledIconButton(
-                                    onClick = {},
+                                    onClick = {
+                                        chat=chat+text+"\n"
+                                        text = "" },
                                     modifier = Modifier.size(60.dp, 60.dp)
                                 ) {
                                     Icon(
@@ -191,6 +197,8 @@ fun ChatScreenDemo() {
     BirchTheme(darkTheme = true,
         dynamicColor = false) {
         ChatScreen(
+            viewModel = BirchViewModel(),
+            uiState = BirchUIState(),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(dimensionResource(R.dimen.padding_medium)),
