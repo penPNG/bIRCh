@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -57,12 +58,15 @@ import com.github.penpng.birch.R
 import com.github.penpng.birch.data.BirchUIState
 import com.github.penpng.birch.ui.theme.BirchTheme
 import com.github.penpng.birch.ui.theme.Pink40
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatAppBar(
     navigateUp: () -> Unit,
+    scope: CoroutineScope,
+    drawerState: DrawerState,
     modifier: Modifier = Modifier
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -76,6 +80,14 @@ fun ChatAppBar(
                 IconButton(onClick = navigateUp) {
                     Icon(
                         painter = painterResource(R.drawable.logout_ic),
+                        contentDescription = null
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                    Icon(
+                        painter = painterResource(R.drawable.users_ic),
                         contentDescription = null
                     )
                 }
@@ -132,7 +144,9 @@ fun ChatScreen(
                     Scaffold(
                         topBar = {
                             ChatAppBar(
-                                navigateUp = onDisconnectButtonClicked
+                                navigateUp = onDisconnectButtonClicked,
+                                scope = scope,
+                                drawerState = drawerState
                             )
                         }
                     ) { innerPadding ->
