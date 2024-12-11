@@ -196,7 +196,7 @@ fun ChatScreen(
                                             if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
                                                 if (text != "") {
                                                     viewModel.updateChat(viewModel.getNick()+": "+text)
-                                                    viewModel.sendMessage(text)
+                                                    //viewModel.sendMessage(text)
 
                                                 }
                                                 //println(viewModel.uiState.value.chat.toString())
@@ -211,8 +211,7 @@ fun ChatScreen(
                                     onClick = {
                                         //chat=chat+viewModel.uiState.value.nickname+text+"\n"
                                         if (text != "") {
-                                            viewModel.updateChat(text)
-                                            viewModel.sendMessage(text)
+                                            viewModel.updateChat(viewModel.getNick()+": "+text)                                            //viewModel.sendMessage(text)
                                         }
                                         //println(viewModel.uiState.value.chat.toString())
                                         text = "" },

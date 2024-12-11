@@ -103,7 +103,7 @@ fun ConnectScreen(
                 modifier = Modifier.onKeyEvent {
                     if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
                         viewModel.updateServer(items[selectedIndex])
-                        viewModel.updateNick(currentNickname)
+                        viewModel.updateNick(currentNickname.removeRange(currentNickname.length-1,currentNickname.length))
                         onConnectButtonClicked()
                         true
                     }

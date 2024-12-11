@@ -27,8 +27,9 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
     )
 
     init {
-        try {
+        //try {
             Thread(Runnable {
+                println("TRY IT")
                 server = Socket(serverName, 6667)
                 println("connection")
                 sender = PrintWriter(server.getOutputStream(), true)
@@ -43,9 +44,9 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
                 println("connected")
                 getChat()
             }).start()
-        } catch (_: IOException) {
+        /*} catch (_: IOException) {
             println("Connection Lost")
-        }
+        }*/
     }
 
 

@@ -58,7 +58,7 @@ fun BirchApp(
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     onConnectButtonClicked = {
-                        viewModel.createConnection(Connection(viewModel.getNick(), viewModel.getServer(), viewModel))
+                        //viewModel.createConnection(Connection(viewModel.getNick(), viewModel.getServer(), viewModel))
                         navController.navigate(bIRChScreen.Chat.name)
                     },
                     viewModel = viewModel,
