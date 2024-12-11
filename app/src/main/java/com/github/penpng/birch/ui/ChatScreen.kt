@@ -69,12 +69,13 @@ import kotlinx.coroutines.launch
 fun ChatAppBar(
     navigateUp: () -> Unit,
     scope: CoroutineScope,
+    viewModel: BirchViewModel,
     drawerState: DrawerState,
     modifier: Modifier = Modifier
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         TopAppBar(
-            title = { Text("Server X") },
+            title = { Text(viewModel.getServer()) },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Pink40
             ),
@@ -167,7 +168,8 @@ fun ChatScreen(
                             ChatAppBar(
                                 navigateUp = onDisconnectButtonClicked,
                                 scope = scope,
-                                drawerState = drawerState
+                                drawerState = drawerState,
+                                viewModel = viewModel
                             )
                         }
                     ) { innerPadding ->
