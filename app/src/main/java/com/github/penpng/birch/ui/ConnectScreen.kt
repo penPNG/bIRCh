@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,7 +61,7 @@ fun ConnectScreen(
 
     var currentNickname by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Server 1", "Server 2")
+    val items = listOf("irc.libera.chat", "irc.librairc.net")
     var selectedIndex by remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
 
@@ -98,7 +99,16 @@ fun ConnectScreen(
                 value = currentNickname,
                 onValueChange = { currentNickname = it },
                 label = { Text("Nickname") },
-                maxLines = 1
+                maxLines = 1,
+                modifier = Modifier.onKeyEvent {
+                    if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
+                        viewModel.updateServer(items[selectedIndex])
+                        viewModel.updateNick(currentNickname)
+                        onConnectButtonClicked()
+                        true
+                    }
+                    false
+                }
             )
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
             Box {
@@ -122,6 +132,8 @@ fun ConnectScreen(
 //                        scope.launch {
 //                            upr.updateNickname(currentNickname)
 //                        }
+                        viewModel.updateServer(items[selectedIndex])
+                        viewModel.updateNick(currentNickname)
                         onConnectButtonClicked()
                     }) {
                         Text("Connect")

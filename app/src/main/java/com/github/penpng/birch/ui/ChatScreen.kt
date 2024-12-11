@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -173,15 +174,9 @@ fun ChatScreen(
                         ) {
                             Surface(color = Color(0xFF201D1E)) {
                                 var offset by remember { mutableStateOf(0f) }
-                                Text(chat.toString(),
+                                Text(viewModel.getChat(),
                                     modifier = Modifier.padding(8.dp).fillMaxWidth().height(690.dp)
-                                        .scrollable(
-                                            orientation = Orientation.Vertical,
-                                            state = rememberScrollableState { delta ->
-                                                offset += delta
-                                                delta
-                                            }
-                                        ),
+                                        .verticalScroll(rememberScrollState(), reverseScrolling = true),
                                     textAlign = TextAlign.Left,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
@@ -197,11 +192,29 @@ fun ChatScreen(
                                     label = { Text("Message") },
                                     maxLines = 1,
                                     modifier = Modifier.weight(weight = 1f, fill = true)
+                                        .onKeyEvent {
+                                            if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
+                                                if (text != "") {
+                                                    viewModel.updateChat(viewModel.getNick()+": "+text)
+                                                    viewModel.sendMessage(text)
+
+                                                }
+                                                //println(viewModel.uiState.value.chat.toString())
+                                                text = ""
+                                                true
+                                            }
+                                            false
+                                        }
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 FilledIconButton(
                                     onClick = {
-                                        chat=chat+text+"\n"
+                                        //chat=chat+viewModel.uiState.value.nickname+text+"\n"
+                                        if (text != "") {
+                                            viewModel.updateChat(text)
+                                            viewModel.sendMessage(text)
+                                        }
+                                        //println(viewModel.uiState.value.chat.toString())
                                         text = "" },
                                     modifier = Modifier.size(60.dp, 60.dp)
                                 ) {

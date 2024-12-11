@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.penpng.birch.data.Connection
 import com.github.penpng.birch.data.UserPreferencesRepository
 import com.github.penpng.birch.ui.BirchViewModel
 import com.github.penpng.birch.ui.ChatScreen
@@ -57,6 +58,7 @@ fun BirchApp(
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     onConnectButtonClicked = {
+                        viewModel.createConnection(Connection(viewModel.getNick(), viewModel.getServer(), viewModel))
                         navController.navigate(bIRChScreen.Chat.name)
                     },
                     viewModel = viewModel,
@@ -71,6 +73,7 @@ fun BirchApp(
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                     onDisconnectButtonClicked = {
+                        viewModel.closeConnection()
                         navController.popBackStack(bIRChScreen.Login.name, inclusive = false)
                     }
                 )
