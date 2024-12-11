@@ -1,8 +1,10 @@
 package com.github.penpng.birch.ui
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import android.R.attr.label
+import android.R.attr.text
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +36,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -55,12 +55,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getSystemService
 import com.github.penpng.birch.R
 import com.github.penpng.birch.data.BirchUIState
 import com.github.penpng.birch.ui.theme.BirchTheme
 import com.github.penpng.birch.ui.theme.Pink40
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,6 +133,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(items[0]) }
     var chat by remember { mutableStateOf("")}
+    var text by remember { mutableStateOf("") }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
@@ -147,6 +150,7 @@ fun ChatScreen(
                                     selected = false,
                                     onClick = {
                                         scope.launch { drawerState.close() }
+                                        text = item
                                         selectedItem = item
                                     },
                                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -168,15 +172,24 @@ fun ChatScreen(
                         }
                     ) { innerPadding ->
                         Column(
-                            modifier = Modifier.padding(innerPadding).fillMaxSize().padding(8.dp),
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+                                .padding(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Top
                         ) {
                             Surface(color = Color(0xFF201D1E)) {
                                 var offset by remember { mutableStateOf(0f) }
                                 Text(viewModel.getChat(),
-                                    modifier = Modifier.padding(8.dp).fillMaxWidth().height(690.dp)
-                                        .verticalScroll(rememberScrollState(), reverseScrolling = true),
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth()
+                                        .height(690.dp)
+                                        .verticalScroll(
+                                            rememberScrollState(),
+                                            reverseScrolling = true
+                                        ),
                                     textAlign = TextAlign.Left,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
@@ -185,17 +198,17 @@ fun ChatScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Row(modifier = Modifier.fillMaxWidth()) {
-                                var text by remember { mutableStateOf("") }
                                 TextField(
                                     value = text,
                                     onValueChange = { text = it },
                                     label = { Text("Message") },
                                     maxLines = 1,
-                                    modifier = Modifier.weight(weight = 1f, fill = true)
+                                    modifier = Modifier
+                                        .weight(weight = 1f, fill = true)
                                         .onKeyEvent {
                                             if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
                                                 if (text != "") {
-                                                    viewModel.updateChat(viewModel.getNick()+": "+text)
+                                                    viewModel.updateChat(viewModel.getNick() + ": " + text)
                                                     //viewModel.sendMessage(text)
 
                                                 }
