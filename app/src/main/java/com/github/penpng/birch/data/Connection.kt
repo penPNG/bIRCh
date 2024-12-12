@@ -25,7 +25,8 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
         "JOIN",
         "MODE",
         "ERROR",
-        "PART"
+        "PART",
+        "QUIT"
     )
 
     init {
@@ -100,22 +101,41 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
                             return@post
                         }
 
+                        3 -> { //JOIN
+                            if (messageSplit[0].split("!")[0].substring(1)==viewModel.getNick()) {
+                                viewModel.updateChat("Now talking on "+message)
+                                println("Now talking on "+message)
+                            } else {
+                                viewModel.updateChat(messageSplit[0].split("!")[0].substring(1) + " has joined")
+                                println(messageSplit[0].split("!")[0].substring(1) + " has joined")
+                            }
+                            return@post
+                        }
+
                         5 -> { //ERROR
                             disconnect()
                             return@post
                         }
 
                         6 -> { //PART
+                            viewModel.updateChat(messageSplit[0].split("!")[0].substring(1) + " has left (" + message+")")
+                            println(messageSplit[0].split("!")[0].substring(1) + " has left (" + message+")")
                             return@post
                         }
 
-                        2, 3, 4 -> return@post
+                        7 -> { //QUIT
+                            viewModel.updateChat(messageSplit[0].split("!")[0].substring(1) + " has quit (" + message+")")
+                            println(messageSplit[0].split("!")[0].substring(1) + " has quit (" + message+")")
+                            return@post
+                        }
+
+                        2, 4 -> return@post
                     }
                 }
             }
             when (command.toInt()) {
                 353 -> {
-                    //users = message.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    viewModel.updateUsers(message.split(" ".toRegex()))
                     //chatPanel.setUserList(users)
                     return@post
                 }

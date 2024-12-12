@@ -44,6 +44,14 @@ class BirchViewModel() : ViewModel() {
         }
     }
 
+    fun updateUsers(users: List<String>) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                users = users.sorted()
+            )
+        }
+    }
+
     fun sendMessage(message: String) {
         uiState.value.connection?.sendMessage(message)
     }

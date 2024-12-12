@@ -133,6 +133,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(items[0]) }
     var chat by remember { mutableStateOf("")}
+    var text by remember { mutableStateOf("") }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
@@ -142,13 +143,14 @@ fun ChatScreen(
                     ModalDrawerSheet {
                         Column(Modifier.verticalScroll(rememberScrollState())) {
                             Spacer(Modifier.height(12.dp))
-                            items.forEach { item ->
+                            viewModel.uiState.collectAsState().value.users.forEach { item ->
                                 NavigationDrawerItem(
                                     icon = { Icon(painter = painterResource(R.drawable.user_ic), contentDescription = null) },
                                     label = { Text(item) },
                                     selected = false,
                                     onClick = {
                                         scope.launch { drawerState.close() }
+                                        text += item
                                         selectedItem = item
                                     },
                                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -188,7 +190,6 @@ fun ChatScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Row(modifier = Modifier.fillMaxWidth()) {
-                                var text by remember { mutableStateOf("") }
                                 TextField(
                                     value = text,
                                     onValueChange = { text = it },
