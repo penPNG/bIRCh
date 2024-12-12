@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -68,11 +69,12 @@ fun ChatAppBar(
     navigateUp: () -> Unit,
     scope: CoroutineScope,
     drawerState: DrawerState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: BirchViewModel
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         TopAppBar(
-            title = { Text("Server X") },
+            title = { Text(viewModel.getServer()) },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Pink40
             ),
@@ -163,7 +165,8 @@ fun ChatScreen(
                             ChatAppBar(
                                 navigateUp = onDisconnectButtonClicked,
                                 scope = scope,
-                                drawerState = drawerState
+                                drawerState = drawerState,
+                                viewModel = viewModel
                             )
                         }
                     ) { innerPadding ->
@@ -173,7 +176,7 @@ fun ChatScreen(
                             verticalArrangement = Arrangement.Top
                         ) {
                             Surface(color = Color(0xFF201D1E)) {
-                                var offset by remember { mutableStateOf(0f) }
+                                var offset by remember { mutableFloatStateOf(0f) }
                                 Text(viewModel.getChat(),
                                     modifier = Modifier.padding(8.dp).fillMaxWidth().height(690.dp)
                                         .verticalScroll(rememberScrollState(), reverseScrolling = true),
@@ -195,7 +198,9 @@ fun ChatScreen(
                                         .onKeyEvent {
                                             if (it.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
                                                 if (text != "") {
-                                                    viewModel.updateChat(viewModel.getNick()+": "+text)
+                                                    if (!text.startsWith("/")) {
+                                                        viewModel.updateChat(viewModel.getNick() + ": " + text)
+                                                    }
                                                     viewModel.sendMessage(text)
 
                                                 }

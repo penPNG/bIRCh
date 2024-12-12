@@ -23,7 +23,9 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
         "PING",
         "NOTICE",
         "JOIN",
-        "MODE"
+        "MODE",
+        "ERROR",
+        "PART"
     )
 
     init {
@@ -63,13 +65,15 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
 
     }
 
-    fun parseChat(fullMessage: String) {
+    fun parseChat(fullMessage: String?) {
+        if (fullMessage == null) return
         println(fullMessage)
         var messageSplit: List<String> = fullMessage.split(" :")
         val command: String
         val message: String
         if (messageSplit.size > 1) {
-            command = messageSplit[0].split(" ")[1];
+            if (messageSplit[0].split(" ").size > 1) { command = messageSplit[0].split(" ")[1] }
+            else { command = messageSplit[0] }
             message = messageSplit[1]
         } else {
             messageSplit = fullMessage.split(" ")
@@ -82,15 +86,26 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
             for (cmd in COMMANDS) {
                 if (command.contains(cmd)) {
                     when (COMMANDS.indexOf(cmd)) {
-                        0 -> {
+                        0 -> { //PRIVMSG
                             viewModel.updateChat(messageSplit[0].split("!")[0].substring(1) + ": " + message)
                             println(messageSplit[0].split("!")[0].substring(1) + ": " + message)
                             return@post
                         }
 
-                        1 -> {
-                            sender.println(
-                                "PONG " + command.split(" ")[0].substring(1))
+                        1 -> { //PING
+                            Thread(Runnable {sender.println(
+                                "PONG " + message)}).start()
+                            println("PONG " + message)
+
+                            return@post
+                        }
+
+                        5 -> { //ERROR
+                            disconnect()
+                            return@post
+                        }
+
+                        6 -> { //PART
                             return@post
                         }
 
@@ -119,7 +134,11 @@ class Connection(val nickname: String, val serverName: String, val viewModel: Bi
 
     fun sendMessage(message: String) {
         Thread(Runnable {
-            sender.println("PRIVMSG #test :"+message)
+            if (message.startsWith("/")) {
+                sender.println(message.substring(1))
+            }else {
+                sender.println("PRIVMSG #test :" + message)
+            }
         }).start()
     }
 

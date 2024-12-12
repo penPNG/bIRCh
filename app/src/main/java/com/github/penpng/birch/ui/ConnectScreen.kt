@@ -134,6 +134,7 @@ fun ConnectScreen(
 //                        }
                         viewModel.updateServer(items[selectedIndex])
                         viewModel.updateNick(currentNickname)
+                        viewModel.clearChat()
                         onConnectButtonClicked()
                     }) {
                         Text("Connect")

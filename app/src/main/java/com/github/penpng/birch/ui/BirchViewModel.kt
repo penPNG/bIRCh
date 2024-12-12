@@ -64,5 +64,13 @@ class BirchViewModel() : ViewModel() {
         uiState.value.connection?.disconnect()
     }
 
+    fun clearChat() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                chat = StringBuilder("")
+            )
+        }
+    }
+
 
 }
